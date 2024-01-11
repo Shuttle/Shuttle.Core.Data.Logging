@@ -17,6 +17,7 @@ namespace Shuttle.Core.Data.Logging
             services.AddOptions<DataAccessLoggingOptions>().Configure(options =>
             {
                 options.DatabaseContext = serviceBusLoggingBuilder.Options.DatabaseContext;
+                options.DbCommandFactory = serviceBusLoggingBuilder.Options.DbCommandFactory;
             });
 
             services.AddHostedService<DatabaseContextLogger>();

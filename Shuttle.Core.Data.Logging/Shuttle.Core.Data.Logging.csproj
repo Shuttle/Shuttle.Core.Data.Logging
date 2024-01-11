@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-    <PackageReference Include="Shuttle.Core.Data" Version="15.0.0" />
+    <PackageReference Include="Shuttle.Core.Data" Version="15.0.1" />
   </ItemGroup>
 
 </Project>

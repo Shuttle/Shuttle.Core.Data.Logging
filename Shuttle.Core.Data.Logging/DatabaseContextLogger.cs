@@ -28,12 +28,11 @@ namespace Shuttle.Core.Data.Logging
             }
 
             _databaseContextFactory.DatabaseContextCreated += OnDatabaseContextCreated;
-            _databaseContextFactory.DatabaseContextReferenced += OnDatabaseContextReferenced;
         }
 
         private void OnDatabaseContextReferenced(object sender, DatabaseContextEventArgs e)
         {
-            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextReference] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}' / reference count = {e.DatabaseContext.ReferenceCount}");
+            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextReference] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}'");
 
             e.DatabaseContext.TransactionStarted += OnTransactionStarted;
             e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
@@ -42,12 +41,11 @@ namespace Shuttle.Core.Data.Logging
 
         private void OnDatabaseContextCreated(object sender, DatabaseContextEventArgs e)
         {
-            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}' / ReferenceCount =  {e.DatabaseContext.ReferenceCount}");
+            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}'");
 
             e.DatabaseContext.TransactionStarted += OnTransactionStarted;
             e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
             e.DatabaseContext.Disposed += OnDisposed;
-            e.DatabaseContext.DisposeIgnored += OnDisposeIgnored;
         }
 
         private void OnDisposeIgnored(object sender, EventArgs e)
@@ -57,7 +55,7 @@ namespace Shuttle.Core.Data.Logging
                 return;
             }
 
-            _logger.LogTrace($"[DatabaseContext.DisposeIgnored] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}' / ReferenceCount =  {databaseContext.ReferenceCount}");
+            _logger.LogTrace($"[DatabaseContext.DisposeIgnored] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}'");
         }
 
         private void OnDisposed(object sender, EventArgs e)
@@ -67,12 +65,11 @@ namespace Shuttle.Core.Data.Logging
                 return;
             }
 
-            _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}' / ReferenceCount =  {databaseContext.ReferenceCount}");
+            _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}'");
 
             databaseContext.TransactionStarted -= OnTransactionStarted;
             databaseContext.TransactionCommitted -= OnTransactionCommitted;
             databaseContext.Disposed -= OnDisposed;
-            databaseContext.DisposeIgnored -= OnDisposeIgnored;
         }
 
         private void OnTransactionCommitted(object sender, TransactionEventArgs e)
@@ -82,7 +79,7 @@ namespace Shuttle.Core.Data.Logging
                 return;
             }
 
-            _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / Key = ' {databaseContext.Key} ' / ReferenceCount =   {databaseContext.ReferenceCount}");
+            _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / Key = ' {databaseContext.Key}'");
         }
 
         private void OnTransactionStarted(object sender, TransactionEventArgs e)
@@ -92,7 +89,7 @@ namespace Shuttle.Core.Data.Logging
                 return;
             }
 
-            _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / Key = ' {databaseContext.Key} ' / ReferenceCount =   {databaseContext.ReferenceCount}");
+            _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / Key = ' {databaseContext.Key}'");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -105,7 +102,6 @@ namespace Shuttle.Core.Data.Logging
             if (_dataAccessLoggingOptions.DatabaseContext)
             {
                 _databaseContextFactory.DatabaseContextCreated -= OnDatabaseContextCreated;
-                _databaseContextFactory.DatabaseContextReferenced -= OnDatabaseContextReferenced;
             }
             
             return Task.CompletedTask;

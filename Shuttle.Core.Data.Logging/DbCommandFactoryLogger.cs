@@ -34,21 +34,28 @@ namespace Shuttle.Core.Data.Logging
 
         private void OnDbCommandCreated(object sender, DbCommandCreatedEventArgs e)
         {
-            var parameters = new StringBuilder();
+            var message = new StringBuilder();
+
+            message.AppendLine("[IDbCommandFactory.DbCommandCreated] :-");
+            message.AppendLine($"\tcommand type = '{e.DbCommand.CommandType}'");
+            message.AppendLine("\tcommand text:");
+            message.AppendLine("---");
+            message.AppendLine($"{e.DbCommand.CommandText}");
+            message.AppendLine("---");
 
             if (e.DbCommand.Parameters != null && e.DbCommand.Parameters.Count > 0)
             {
-                parameters.AppendLine();
-                parameters.AppendLine("parameters:");
+                message.AppendLine();
+                message.AppendLine("\tparameters:");
 
                 foreach (IDataParameter dbCommandParameter in e.DbCommand.Parameters)
                 {
-                    parameters.AppendLine($"\t{dbCommandParameter.ParameterName} = {dbCommandParameter.Value}");
+                    message.AppendLine($"\t\t{dbCommandParameter.ParameterName} = {dbCommandParameter.Value}");
 
                 }
             }
 
-            _logger.LogTrace($"[IDbCommandFactory.DbCommandCreated] :-\n\rcommand type = '{e.DbCommand.CommandType}'\n\rcommand text\n\r---n\r{e.DbCommand.CommandText}\n\r---{parameters}");
+            _logger.LogTrace(message.ToString());
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
