@@ -41,21 +41,11 @@ namespace Shuttle.Core.Data.Logging
 
         private void OnDatabaseContextCreated(object sender, DatabaseContextEventArgs e)
         {
-            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}'");
+            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / key = '{e.DatabaseContext.Key}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
 
             e.DatabaseContext.TransactionStarted += OnTransactionStarted;
             e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
             e.DatabaseContext.Disposed += OnDisposed;
-        }
-
-        private void OnDisposeIgnored(object sender, EventArgs e)
-        {
-            if (!(sender is IDatabaseContext databaseContext))
-            {
-                return;
-            }
-
-            _logger.LogTrace($"[DatabaseContext.DisposeIgnored] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}'");
         }
 
         private void OnDisposed(object sender, EventArgs e)
@@ -65,7 +55,7 @@ namespace Shuttle.Core.Data.Logging
                 return;
             }
 
-            _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}'");
+            _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / Key = '{databaseContext.Key}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
 
             databaseContext.TransactionStarted -= OnTransactionStarted;
             databaseContext.TransactionCommitted -= OnTransactionCommitted;
