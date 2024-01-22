@@ -58,19 +58,19 @@ namespace Shuttle.Core.Data.Logging
             _logger.LogTrace(message.ToString());
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             if (_dataAccessLoggingOptions.DbCommandFactory)
             {
                 _dbCommandFactory.DbCommandCreated -= OnDbCommandCreated;
             }
             
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
     }
 }
