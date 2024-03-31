@@ -32,7 +32,6 @@ namespace Shuttle.Core.Data.Logging
             }
 
             _databaseContextFactory.DatabaseContextCreated += OnDatabaseContextCreated;
-            _databaseContextService.DatabaseContextAsyncLocalAssigned += OnDatabaseContextAsyncLocalAssigned;
             _databaseContextService.DatabaseContextAsyncLocalValueChanged += DatabaseContextAsyncLocalValueChanged;
             _databaseContextService.DatabaseContextAsyncLocalValueAssigned += OnDatabaseContextAsyncLocalValueAssigned;
         }
@@ -40,11 +39,6 @@ namespace Shuttle.Core.Data.Logging
         private void OnDatabaseContextAsyncLocalValueAssigned(object sender, DatabaseContextAsyncLocalValueAssignedEventArgs e)
         {
             _logger.LogTrace($"[database-context/async-local-value-assigned] : active name = '{e.AmbientData.ActiveDatabaseContext?.Name ?? "(no active database context)"}' / database context count = {e.AmbientData.DatabaseContexts.Count()} / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
-        }
-
-        private void OnDatabaseContextAsyncLocalAssigned(object sender, EventArgs e)
-        {
-            _logger.LogTrace($"[database-context/async-local-assigned] : managed thread id = {Thread.CurrentThread.ManagedThreadId}");
         }
 
         private void DatabaseContextAsyncLocalValueChanged(object sender, DatabaseContextAsyncLocalValueChangedEventArgs e)
