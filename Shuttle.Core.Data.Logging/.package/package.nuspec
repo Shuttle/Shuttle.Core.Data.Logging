@@ -3,7 +3,7 @@
 <package>
 	<metadata>
 		<id>Shuttle.Core.Data.Logging</id>
-		<version>16.0.1</version>
+		<version>16.0.2</version>
 		<authors>Eben Roux</authors>
 		<owners>Eben Roux</owners>
 		<license type="expression">BSD-3-Clause</license>
@@ -20,7 +20,7 @@
       <dependency id="Microsoft.Extensions.Hosting" version="8.0.0" />
       <dependency id="Microsoft.Extensions.Logging" version="8.0.0" />
       <dependency id="Microsoft.Extensions.Options" version="8.0.2" />
-      <dependency id="Shuttle.Core.Data" version="16.0.1" />
+      <dependency id="Shuttle.Core.Data" version="16.0.2" />
 		</dependencies>
 	</metadata>
 	<files>
