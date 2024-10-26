@@ -45,7 +45,7 @@ public class DatabaseContextLogger : IHostedService
 
     private void OnDatabaseContextCreated(object? sender, DatabaseContextEventArgs e)
     {
-        _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
 
         e.DatabaseContext.TransactionStarted += OnTransactionStarted;
         e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
@@ -59,7 +59,7 @@ public class DatabaseContextLogger : IHostedService
             return;
         }
 
-        _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
 
         databaseContext.TransactionStarted -= OnTransactionStarted;
         databaseContext.TransactionCommitted -= OnTransactionCommitted;
@@ -73,7 +73,7 @@ public class DatabaseContextLogger : IHostedService
             return;
         }
 
-        _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
     }
 
     private void OnTransactionStarted(object? sender, TransactionEventArgs e)
@@ -83,6 +83,6 @@ public class DatabaseContextLogger : IHostedService
             return;
         }
 
-        _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
     }
 }
