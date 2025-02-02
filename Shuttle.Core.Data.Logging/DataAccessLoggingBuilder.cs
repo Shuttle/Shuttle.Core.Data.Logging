@@ -2,25 +2,22 @@
 using Microsoft.Extensions.DependencyInjection;
 using Shuttle.Core.Contract;
 
-namespace Shuttle.Core.Data.Logging
+namespace Shuttle.Core.Data.Logging;
+
+public class DataAccessLoggingBuilder
 {
-    public class DataAccessLoggingBuilder
+    private DataAccessLoggingOptions _dataAccessLoggingOptions = new();
+
+    public DataAccessLoggingBuilder(IServiceCollection services)
     {
-        private DataAccessLoggingOptions _dataAccessLoggingOptions = new DataAccessLoggingOptions();
-
-        public DataAccessLoggingOptions Options
-        {
-            get => _dataAccessLoggingOptions;
-            set => _dataAccessLoggingOptions = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        public IServiceCollection Services { get; }
-
-        public DataAccessLoggingBuilder(IServiceCollection services)
-        {
-            Guard.AgainstNull(services, nameof(services));
-
-            Services = services;
-        }
+        Services = Guard.AgainstNull(services);
     }
+
+    public DataAccessLoggingOptions Options
+    {
+        get => _dataAccessLoggingOptions;
+        set => _dataAccessLoggingOptions = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public IServiceCollection Services { get; }
 }

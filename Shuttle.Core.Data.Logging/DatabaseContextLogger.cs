@@ -6,86 +6,83 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Shuttle.Core.Contract;
 
-namespace Shuttle.Core.Data.Logging
+namespace Shuttle.Core.Data.Logging;
+
+public class DatabaseContextLogger : IHostedService
 {
-    public class DatabaseContextLogger : IHostedService
+    private readonly DataAccessLoggingOptions _dataAccessLoggingOptions;
+    private readonly IDatabaseContextFactory _databaseContextFactory;
+    private readonly ILogger<DatabaseContextLogger> _logger;
+
+    public DatabaseContextLogger(IOptions<DataAccessLoggingOptions> dataLoggingOptions, ILogger<DatabaseContextLogger> logger, IDatabaseContextFactory databaseContextFactory)
     {
-        private readonly IDatabaseContextFactory _databaseContextFactory;
-        private readonly ILogger<DatabaseContextLogger> _logger;
-        private readonly DataAccessLoggingOptions _dataAccessLoggingOptions;
+        _dataAccessLoggingOptions = Guard.AgainstNull(Guard.AgainstNull(dataLoggingOptions).Value);
+        _logger = Guard.AgainstNull(logger);
+        _databaseContextFactory = Guard.AgainstNull(databaseContextFactory);
 
-        public DatabaseContextLogger(IOptions<DataAccessLoggingOptions> dataLoggingOptions, ILogger<DatabaseContextLogger> logger, IDatabaseContextFactory databaseContextFactory)
+        if (!_dataAccessLoggingOptions.DatabaseContext)
         {
-            Guard.AgainstNull(dataLoggingOptions, nameof(dataLoggingOptions));
-
-            _dataAccessLoggingOptions = Guard.AgainstNull(dataLoggingOptions.Value, nameof(dataLoggingOptions.Value));
-            _logger = Guard.AgainstNull(logger, nameof(logger));
-            _databaseContextFactory = Guard.AgainstNull(databaseContextFactory, nameof(databaseContextFactory));
-
-            if (!_dataAccessLoggingOptions.DatabaseContext)
-            {
-                return;
-            }
-
-            _databaseContextFactory.DatabaseContextCreated += OnDatabaseContextCreated;
+            return;
         }
 
-        private void OnDatabaseContextCreated(object sender, DatabaseContextEventArgs e)
-        {
-            _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        _databaseContextFactory.DatabaseContextCreated += OnDatabaseContextCreated;
+    }
 
-            e.DatabaseContext.TransactionStarted += OnTransactionStarted;
-            e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
-            e.DatabaseContext.Disposed += OnDisposed;
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        if (_dataAccessLoggingOptions.DatabaseContext)
+        {
+            _databaseContextFactory.DatabaseContextCreated -= OnDatabaseContextCreated;
         }
 
-        private void OnDisposed(object sender, EventArgs e)
+        await Task.CompletedTask;
+    }
+
+    private void OnDatabaseContextCreated(object? sender, DatabaseContextEventArgs e)
+    {
+        _logger.LogTrace($"[IDatabaseContextFactory.DatabaseContextCreated] : name = '{e.DatabaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
+
+        e.DatabaseContext.TransactionStarted += OnTransactionStarted;
+        e.DatabaseContext.TransactionCommitted += OnTransactionCommitted;
+        e.DatabaseContext.Disposed += OnDisposed;
+    }
+
+    private void OnDisposed(object? sender, EventArgs e)
+    {
+        if (sender is not IDatabaseContext databaseContext)
         {
-            if (!(sender is IDatabaseContext databaseContext))
-            {
-                return;
-            }
-
-            _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
-
-            databaseContext.TransactionStarted -= OnTransactionStarted;
-            databaseContext.TransactionCommitted -= OnTransactionCommitted;
-            databaseContext.Disposed -= OnDisposed;
+            return;
         }
 
-        private void OnTransactionCommitted(object sender, TransactionEventArgs e)
-        {
-            if (!(sender is IDatabaseContext databaseContext))
-            {
-                return;
-            }
+        _logger.LogTrace($"[DatabaseContext.Disposed] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
 
-            _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+        databaseContext.TransactionStarted -= OnTransactionStarted;
+        databaseContext.TransactionCommitted -= OnTransactionCommitted;
+        databaseContext.Disposed -= OnDisposed;
+    }
+
+    private void OnTransactionCommitted(object? sender, TransactionEventArgs e)
+    {
+        if (sender is not IDatabaseContext databaseContext)
+        {
+            return;
         }
 
-        private void OnTransactionStarted(object sender, TransactionEventArgs e)
-        {
-            if (!(sender is IDatabaseContext databaseContext))
-            {
-                return;
-            }
+        _logger.LogTrace($"[DatabaseContext.TransactionCommitted] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
+    }
 
-            _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / managed thread id = {Thread.CurrentThread.ManagedThreadId}");
+    private void OnTransactionStarted(object? sender, TransactionEventArgs e)
+    {
+        if (sender is not IDatabaseContext databaseContext)
+        {
+            return;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await Task.CompletedTask;
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            if (_dataAccessLoggingOptions.DatabaseContext)
-            {
-                _databaseContextFactory.DatabaseContextCreated -= OnDatabaseContextCreated;
-            }
-
-            await Task.CompletedTask;
-        }
+        _logger.LogTrace($"[DatabaseContext.TransactionStarted] : Name = '{databaseContext.Name}' / managed thread id = {Environment.CurrentManagedThreadId}");
     }
 }

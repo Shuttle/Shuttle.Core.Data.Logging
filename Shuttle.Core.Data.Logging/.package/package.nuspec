@@ -3,7 +3,7 @@
 <package>
 	<metadata>
 		<id>Shuttle.Core.Data.Logging</id>
-		<version>17.0.0</version>
+		<version>20.0.0</version>
 		<authors>Eben Roux</authors>
 		<owners>Eben Roux</owners>
 		<license type="expression">BSD-3-Clause</license>
@@ -13,14 +13,14 @@
 		<repository type="git" url="https://github.com/Shuttle/Shuttle.Core.Data.Logging.git" />
 		<projectUrl>https://github.com/Shuttle/Shuttle.Core.Data.Logging</projectUrl>
 		<description>Provides non-intrusive logging for Shuttle.Core.Data components.</description>
-		<copyright>Copyright (c) 2024, Eben Roux</copyright>
+		<copyright>Copyright (c) 2025, Eben Roux</copyright>
 		<tags></tags>
 		<dependencies>
-      <dependency id="Microsoft.Extensions.DependencyInjection" version="8.0.0" />
-      <dependency id="Microsoft.Extensions.Hosting" version="8.0.0" />
-      <dependency id="Microsoft.Extensions.Logging" version="8.0.0" />
+			      <dependency id="Microsoft.Extensions.DependencyInjection" version="8.0.1" />
+      <dependency id="Microsoft.Extensions.Hosting" version="8.0.1" />
+      <dependency id="Microsoft.Extensions.Logging" version="8.0.1" />
       <dependency id="Microsoft.Extensions.Options" version="8.0.2" />
-      <dependency id="Shuttle.Core.Data" version="17.0.0" />
+      <dependency id="Shuttle.Core.Data" version="20.0.0" />
 		</dependencies>
 	</metadata>
 	<files>
